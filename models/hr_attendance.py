@@ -6,6 +6,13 @@ class HrAttendance(models.Model):
 
     date_in = fields.Date(string="Fecha de Ingreso")
     extra_hours = fields.Float(string="Horas Extra", compute="_compute_extra_hours", store=True)
+    
+    department_id = fields.Many2one(
+        'hr.department', 
+        string="Departamento", 
+        related='employee_id.department_id', 
+        store=True
+    )
 
     @api.depends('worked_hours', 'employee_id')
     def _compute_extra_hours(self):
