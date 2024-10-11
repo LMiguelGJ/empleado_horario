@@ -9,11 +9,12 @@
         para cada día de la semana.
     """,
     'author': 'Luis Miguel',
-    'depends': ['base'],
+    'depends': ['base', 'hr', 'hr_attendance'],
     'data': [
         'views/empleado_views.xml',
+        'views/hr_attendance_views.xml',
         'security/ir.model.access.csv'
     ],
     'installable': True,
-    'application': True,
+    'application': False,
 }

@@ -1,75 +1,23 @@
 <!-- views/fuel_control_views.xml -->
 <odoo>
-<record id="view_empleado_form" model="ir.ui.view">
-        <field name="name">empleado.horario.form</field>
-        <field name="model">empleado.horario</field>
-        <field name="arch" type="xml">
-            <form string="Registro de Empleado">
-                <sheet>
-                    <group>
-                        <field name="nombre"/>
-                        <h2>Horario Laboral</h2>
-                        <group>
-                            <h3>Lunes</h3>
-                            <field name="lunes_labora"/>
-                            <field name="lunes_entrada"/>
-                            <field name="lunes_salida"/>
-                        </group>
-                        <group>
-                            <h3>Martes</h3>
-                            <field name="martes_labora"/>
-                            <field name="martes_entrada"/>
-                            <field name="martes_salida"/>
-                        </group>
-                        <group>
-                            <h3>Miércoles</h3>
-                            <field name="miercoles_labora"/>
-                            <field name="miercoles_entrada"/>
-                            <field name="miercoles_salida"/>
-                        </group>
-                        <group>
-                            <h3>Jueves</h3>
-                            <field name="jueves_labora"/>
-                            <field name="jueves_entrada"/>
-                            <field name="jueves_salida"/>
-                        </group>
-                        <group>
-                            <h3>Viernes</h3>
-                            <field name="viernes_labora"/>
-                            <field name="viernes_entrada"/>
-                            <field name="viernes_salida"/>
-                        </group>
-                        <group>
-                            <h3>Sábado</h3>
-                            <field name="sabado_labora"/>
-                            <field name="sabado_entrada"/>
-                            <field name="sabado_salida"/>
-                        </group>
-                        <group>
-                            <h3>Domingo</h3>
-                            <field name="domingo_labora"/>
-                            <field name="domingo_entrada"/>
-                            <field name="domingo_salida"/>
-                        </group>
+    <data>
+        <!-- Heredar la vista hr.employee.form -->
+        <record id="view_employee_form_inherit_schedule" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit.schedule</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='public']//div[@id='o_work_employee_main']" position="inside">
+                    <group string="Horario de Trabajo">
+                        <field name="tuesday_hours" string="Horas del Martes" widget="selection" class="form-select"/>
+                        <field name="wednesday_hours" string="Horas del Miércoles" widget="selection" class="form-select"/>
+                        <field name="thursday_hours" string="Horas del Jueves" widget="selection" class="form-select"/>
+                        <field name="friday_hours" string="Horas del Viernes" widget="selection" class="form-select"/>
+                        <field name="saturday_hours" string="Horas del Sábado" widget="selection" class="form-select"/>
+                        <field name="sunday_hours" string="Horas del Domingo" widget="selection" class="form-select"/>
                     </group>
-                </sheet>
-                <!-- <footer>
-                    <button type="submit" string="Guardar" class="btn-primary"/>
-                </footer> -->
-            </form>
-        </field>
-    </record>
-
-    <record id="action_empleado_horario" model="ir.actions.act_window">
-        <field name="name">Empleados</field>
-        <field name="view_id" ref="view_empleado_form"/>
-        <field name="res_model">empleado.horario</field>
-        <field name="view_mode">form</field>
-        <field name="target">current</field>
-    </record>
-
-    <menuitem id="menu_empleado_horario_main" name="Gestión de Combustible" sequence="1" web_icon="empleado_horario,static/description/icon.png"/>
-
-    <menuitem id="menu_empleado_horario_actions" name="Nueva Transacción" parent="menu_empleado_horario_main" action="action_empleado_horario" />
-
+                </xpath>
+            </field>
+        </record>
+    </data>
 </odoo>
