@@ -4,7 +4,7 @@ from datetime import timedelta
 class HrAttendance(models.Model):
     _inherit = 'hr.attendance'
 
-    date_in = fields.Datetime(string="Fecha de Ingreso")
+    date_in = fields.Date(string="Fecha de Ingreso")
     extra_hours = fields.Float(string="Horas Extra", compute="_compute_extra_hours", store=True)
 
     @api.depends('worked_hours', 'employee_id')
