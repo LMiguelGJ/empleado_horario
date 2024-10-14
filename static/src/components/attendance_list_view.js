@@ -17,6 +17,9 @@ class AttendanceListViewController extends ListController {
             this.loadSavedDates()
             this.setupClearFilterListener()
             this.setupDateFieldListeners()
+            this.loadData('hr.branch', 'sucursal', 'Suc.')
+            this.loadData('hr.department', 'departamento', 'Depto.')
+            this.loadData('hr.employee', 'empleado', 'Emp.')
         })
     }
 
@@ -71,7 +74,7 @@ class AttendanceListViewController extends ListController {
                     </button>
 
                     <!-- Botón Borrar Filtro -->
-                    <a href="#" class="btn btn-outline-dark ms-3 text-nowrap">
+                    <a class="btn btn-outline-dark ms-3 text-nowrap">
                         BORRAR FILTRO
                     </a>
                 </form>
@@ -123,23 +126,48 @@ class AttendanceListViewController extends ListController {
         if (clearFilterButton) {
             clearFilterButton.addEventListener('click', (event) => {
                 event.preventDefault()
-                this.clearDates()
+                this.clearFilters()
             })
         } else {
             console.warn('No se encontró el botón de borrar filtro')
         }
     }
 
-    clearDates() {
+    clearFilters() {
+        // Limpiar fechas en localStorage
         localStorage.removeItem('attendanceDateFrom')
         localStorage.removeItem('attendanceDateTo')
+
+        // Limpiar todos los campos de filtro
         document.getElementById('date_from').value = ''
         document.getElementById('date_to').value = ''
+        document.getElementById('sucursal').value = ''
+        document.getElementById('departamento').value = ''
+        document.getElementById('empleado').value = ''
+
+        // Volver a la vista original
+        this.env.services.action.doAction({
+            type: 'ir.actions.act_window',
+            name: 'Asistencias',
+            res_model: 'hr.attendance',
+            view_mode: 'list',
+            views: [[false, 'list']],
+            target: 'current',
+            domain: [],
+        })
     }
 
     applyDateFilter(dateFrom, dateTo) {
-        if (!dateFrom && !dateTo) {
-            console.warn('Ambas fechas están vacías. No se aplicará ningún filtro.');
+        const sucursalSelect = document.getElementById('sucursal');
+        const departamentoSelect = document.getElementById('departamento');
+        const empleadoSelect = document.getElementById('empleado');
+
+        const sucursalSeleccionada = sucursalSelect && sucursalSelect.value;
+        const departamentoSeleccionado = departamentoSelect && departamentoSelect.value;
+        const empleadoSeleccionado = empleadoSelect && empleadoSelect.value;
+
+        if (!dateFrom && !dateTo && !sucursalSeleccionada && !departamentoSeleccionado && !empleadoSeleccionado) {
+            console.warn('No se ha seleccionado ningún filtro. No se aplicará ningún cambio.');
             return;
         }
 
@@ -167,6 +195,24 @@ class AttendanceListViewController extends ListController {
         }
         if (dateTo) {
             domain.push(['date_in', '<=', dateTo]);
+        }
+
+        // Añadir filtro por sucursal
+        if (sucursalSeleccionada) {
+            domain.push(['employee_id.branch_id', '=', parseInt(sucursalSeleccionada)]);
+            name += ` (Suc. ${sucursalSelect.options[sucursalSelect.selectedIndex].text})`;
+        }
+
+        // Añadir filtro por departamento
+        if (departamentoSeleccionado) {
+            domain.push(['employee_id.department_id', '=', parseInt(departamentoSeleccionado)]);
+            name += ` (Depto. ${departamentoSelect.options[departamentoSelect.selectedIndex].text})`;
+        }
+
+        // Añadir filtro por empleado
+        if (empleadoSeleccionado) {
+            domain.push(['employee_id', '=', parseInt(empleadoSeleccionado)]);
+            name += ` (Emp. ${empleadoSelect.options[empleadoSelect.selectedIndex].text})`;
         }
 
         this.env.services.action.doAction({
@@ -200,6 +246,38 @@ class AttendanceListViewController extends ListController {
                 console.warn(`No se encontró el campo ${fieldId}`)
             }
         })
+    }
+
+    async loadData(model, selectId, labelText) {
+        try {
+            const result = await this.orm.call(
+                model,
+                'search_read',
+                [[]],
+                {
+                    fields: ['id', 'name'],
+                    limit: 0,
+                }
+            );
+            this.updateSelect(selectId, result, labelText);
+        } catch (error) {
+            console.error(`Error al cargar ${selectId}:`, error);
+        }
+    }
+
+    updateSelect(selectId, options, labelText) {
+        const select = document.getElementById(selectId);
+        if (select) {
+            select.innerHTML = `<option value="">Seleccione ${labelText}</option>`;
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.id;
+                optionElement.textContent = option.name;
+                select.appendChild(optionElement);
+            });
+        } else {
+            console.warn(`No se encontró el select de ${selectId}`);
+        }
     }
 }
 
