@@ -7,6 +7,10 @@
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='department_id']" position="before">
+                    <!-- Aquí agregas lo que quieras insertar -->
+                    <field name="branch_id" string="Sucursal" />
+                </xpath>
                 <xpath expr="//page[@name='public']//div[@id='o_work_employee_main']" position="inside">
                     <group string="Horario de Trabajo">
                         <field name="monday_hours" string="Horas del Lunes" widget="selection" class="form-select"/>

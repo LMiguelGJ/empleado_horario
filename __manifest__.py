@@ -2,6 +2,7 @@
 {
     'name': 'Empleado Horario',
     'version': '1.0',
+    'sequence': -1,
     'category': 'Human Resources',
     'summary': 'Modulo para registrar empleados y sus horarios laborales.',
     'description': """
@@ -15,6 +16,11 @@
         'views/hr_attendance_views.xml',
         'security/ir.model.access.csv'
     ],
+    'assets': {
+        'web.assets_backend': [
+            'empleado_horario/static/src/components/*'
+        ]
+    },
     'installable': True,
     'application': False,
 }

@@ -6,6 +6,12 @@ class HrAttendance(models.Model):
 
     date_in = fields.Date(string="Fecha de Ingreso")
     extra_hours = fields.Float(string="Horas Extra", compute="_compute_extra_hours", store=True)
+    branch_id = fields.Many2one(
+        'hr.branch',  
+        string="Sucursal",  
+        related='employee_id.branch_id', 
+        store=True  
+    )
     
     department_id = fields.Many2one(
         'hr.department', 

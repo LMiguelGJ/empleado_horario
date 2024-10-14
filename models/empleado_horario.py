@@ -3,6 +3,8 @@ from odoo import models, fields
 
 class Employee(models.Model):
     _inherit = 'hr.employee'
+    
+    branch_id = fields.Many2one('hr.branch', string='Sucursal', required=False, ondelete='set null', help='Sucursal a la que pertenece el empleado', index=True)
 
     HOURS_SELECTION = [
         ('4', '4 Horas'),

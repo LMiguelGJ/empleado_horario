@@ -7,6 +7,9 @@
             <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='employee_id']" position="before">
+                    <field name="branch_id" options="{'no_create': False}" />
+                </xpath>
+                <xpath expr="//field[@name='employee_id']" position="before">
                     <field name="department_id" string="Departamento"/>
                 </xpath>
                 <xpath expr="//field[@name='employee_id']" position="after">
@@ -14,6 +17,9 @@
                 </xpath>
                 <xpath expr="//tree" position="inside">
                     <field name="extra_hours" widget="float_time"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="js_class">attendance_list_view</attribute>
                 </xpath>
             </field>
         </record>
