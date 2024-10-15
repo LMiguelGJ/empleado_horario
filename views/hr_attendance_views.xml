@@ -33,9 +33,29 @@
 
         <menuitem 
             id="menu_empleado_horario_root"
-            name="Control de Asistencia"
+            name="Control de Horario"
             web_icon="empleado_horario,static/description/icon.png"
+            sequence="10"/>
+
+        <menuitem 
+            id="menu_empleado_horario_asistencias"
+            name="Asistencias"
+            parent="menu_empleado_horario_root"
             action="action_open_attendance_tree"
             sequence="10"/>
+
+        <record id="action_open_employee_kanban" model="ir.actions.act_window">
+            <field name="name">Empleados</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_id" ref="hr.hr_kanban_view_employees"/>
+        </record>
+
+        <menuitem 
+            id="menu_empleado_horario_empleados"
+            name="Empleados"
+            parent="menu_empleado_horario_root"
+            action="action_open_employee_kanban"
+            sequence="20"/>
     </data>
 </odoo>
