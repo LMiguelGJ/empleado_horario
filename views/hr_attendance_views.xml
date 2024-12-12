@@ -31,18 +31,9 @@
             <field name="view_id" ref="hr_attendance.view_attendance_tree"/>
         </record>
 
-        <menuitem 
-            id="menu_empleado_horario_root"
-            name="Control de Horario"
-            web_icon="empleado_horario,static/description/icon.png"
-            sequence="10"/>
+        <menuitem id="menu_empleado_horario_root" name="Control de Horario" web_icon="empleado_horario,static/description/icon.png" sequence="10"/>
 
-        <menuitem 
-            id="menu_empleado_horario_asistencias"
-            name="Asistencias"
-            parent="menu_empleado_horario_root"
-            action="action_open_attendance_tree"
-            sequence="10"/>
+        <menuitem id="menu_empleado_horario_asistencias" name="Asistencias" parent="menu_empleado_horario_root" action="action_open_attendance_tree" sequence="10"/>
 
         <record id="action_open_employee_kanban" model="ir.actions.act_window">
             <field name="name">Empleados</field>
@@ -51,11 +42,17 @@
             <field name="view_id" ref="hr.hr_kanban_view_employees"/>
         </record>
 
-        <menuitem 
-            id="menu_empleado_horario_empleados"
-            name="Empleados"
-            parent="menu_empleado_horario_root"
-            action="action_open_employee_kanban"
-            sequence="20"/>
+        <menuitem id="menu_empleado_horario_empleados" name="Empleados" parent="menu_empleado_horario_root" action="action_open_employee_kanban" sequence="20"/>
+
+
+        <record id="action_import_attendance_wizard" model="ir.actions.act_window">
+            <field name="name">Import Attendance</field>
+            <field name="res_model">import.attendance.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        
+        <menuitem id="menu_hr_attendance_import" name="Importar Asistencias" parent="menu_empleado_horario_root" action="action_import_attendance_wizard" sequence="30"/>
+    
     </data>
 </odoo>

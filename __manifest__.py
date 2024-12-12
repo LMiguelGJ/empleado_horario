@@ -14,6 +14,7 @@
     'data': [
         'views/empleado_views.xml',
         'views/hr_attendance_views.xml',
+        'wizards/import_attendance_wizard_view.xml',
         'security/ir.model.access.csv'
     ],
     'assets': {

@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_employee_horario_user,access_employee_horario_user,model_hr_employee,base.group_user,1,1,1,1
 access_employee_horario_user,access_employee_horario_user,model_hr_branch,base.group_user,1,1,1,1
+access_employee_horario_user,access_employee_horario_user,model_import_attendance_wizard,base.group_user,1,1,1,1
