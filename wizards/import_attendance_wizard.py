@@ -18,6 +18,7 @@ class ImportAttendanceWizard(models.TransientModel):
 
         # Decodificar contenido del archivo
         contenido_csv = base64.b64decode(self.file).decode('utf-8')
+        contenido_csv = contenido_csv.replace(';', ',')
         file_stream = StringIO(contenido_csv)
         reader = csv.reader(file_stream, delimiter=',')
 
@@ -27,8 +28,8 @@ class ImportAttendanceWizard(models.TransientModel):
             raise UserError(_("El archivo CSV debe tener al menos dos columnas: Fecha y Hora, y Nombre."))
 
         # Buscar encabezados específicos con coincidencias parciales
-        fecha_index = next((i for i, h in enumerate(headers) if "data" in h.lower() and "hora" in h.lower()), None)
-        nombre_index = next((i for i, h in enumerate(headers) if "nome" in h.lower()), None)
+        fecha_index = next((i for i, h in enumerate(headers) if "data e hora" in h.lower()), None)
+        nombre_index = next((i for i, h in enumerate(headers) if "nome (usuário)" in h.lower()), None)
 
         if fecha_index is None or nombre_index is None:
             # Si no se encuentran, usar las dos primeras columnas
@@ -42,10 +43,16 @@ class ImportAttendanceWizard(models.TransientModel):
             fecha_hora_str, nombre = row[fecha_index].strip(), row[nombre_index].strip() or "Desconocido"
 
             # Convertir fecha y hora a objeto datetime
+            fecha_hora_str = fecha_hora_str.strip()
             try:
-                fecha_hora = datetime.strptime(fecha_hora_str, '%m/%d/%Y %H:%M')
+                # Intentar con el formato MM/DD/YYYY HH:MM:SS primero
+                fecha_hora = datetime.strptime(fecha_hora_str, '%m/%d/%Y %H:%M:%S')
             except ValueError:
-                raise UserError(_("Formato de fecha/hora inválido en: %s. Use MM/DD/YYYY HH:MM." % fecha_hora_str))
+                try:
+                    # Si falla, intentar con el formato DD/MM/YYYY HH:MM:SS
+                    fecha_hora = datetime.strptime(fecha_hora_str, '%d/%m/%Y %H:%M:%S')
+                except ValueError:
+                    raise UserError(_("Formato de fecha/hora inválido en: %s. Use MM/DD/YYYY HH:MM:SS o DD/MM/YYYY HH:MM:SS." % fecha_hora_str))
 
             fecha = fecha_hora.date()
 
