@@ -46,7 +46,7 @@
 
 
         <record id="action_import_attendance_wizard" model="ir.actions.act_window">
-            <field name="name">Import Attendance</field>
+            <field name="name">Importar Asistencias</field>
             <field name="res_model">import.attendance.wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>

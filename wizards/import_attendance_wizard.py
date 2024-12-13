@@ -82,7 +82,7 @@ class ImportAttendanceWizard(models.TransientModel):
 
                 empleado_id = mapa_empleados.get(nombre)
                 if not empleado_id:
-                    nuevo_empleado = self.env['hr.employee'].create({'name': nombre})
+                    nuevo_empleado = self.env['hr.employee'].sudo().create({'name': nombre})
                     empleado_id = nuevo_empleado.id
                     mapa_empleados[nombre] = empleado_id
 
