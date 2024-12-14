@@ -5,6 +5,7 @@ from io import StringIO
 from datetime import datetime
 import base64
 
+
 class ImportAttendanceWizard(models.TransientModel):
     _name = 'import.attendance.wizard'
     _description = 'Wizard to Import Attendance Data'
@@ -36,23 +37,19 @@ class ImportAttendanceWizard(models.TransientModel):
             fecha_index, nombre_index = 0, 1
 
         registros = {}
-        for row in reader:
-            # if len(row) < 2:
-            #     continue  # Ignorar filas incompletas
 
+        for row in reader:
             fecha_hora_str, nombre = row[fecha_index].strip(), row[nombre_index].strip() or "Desconocido"
 
             # Convertir fecha y hora a objeto datetime
             fecha_hora_str = fecha_hora_str.strip()
             try:
-                # Intentar con el formato MM/DD/YYYY HH:MM:SS primero
-                fecha_hora = datetime.strptime(fecha_hora_str, '%m/%d/%Y %H:%M:%S')
+                fecha_hora = datetime.strptime(fecha_hora_str, '%d/%m/%Y %H:%M:%S')
             except ValueError:
                 try:
-                    # Si falla, intentar con el formato DD/MM/YYYY HH:MM:SS
-                    fecha_hora = datetime.strptime(fecha_hora_str, '%d/%m/%Y %H:%M:%S')
+                    fecha_hora = datetime.strptime(fecha_hora_str, '%d/%m/%Y %H:%M')
                 except ValueError:
-                    raise UserError(_("Formato de fecha/hora inválido en: %s. Use MM/DD/YYYY HH:MM:SS o DD/MM/YYYY HH:MM:SS." % fecha_hora_str))
+                    raise UserError(_("Formato de fecha/hora inválido en: %s. Use DD/MM/YYYY HH:MM:SS o DD/MM/YYYY H:MM." % fecha_hora_str))
 
             fecha = fecha_hora.date()
 
@@ -61,15 +58,22 @@ class ImportAttendanceWizard(models.TransientModel):
                 registros[nombre] = {}
 
             if fecha not in registros[nombre]:
-                registros[nombre][fecha] = {'entrada': None, 'salida': None}
+                registros[nombre][fecha] = []
 
-            # Determinar si es entrada o salida
-            if fecha_hora.hour < 12:  # Entrada
-                if registros[nombre][fecha]['entrada'] is None or fecha_hora < registros[nombre][fecha]['entrada']:
-                    registros[nombre][fecha]['entrada'] = fecha_hora
-            else:  # Salida
-                if registros[nombre][fecha]['salida'] is None or fecha_hora > registros[nombre][fecha]['salida']:
-                    registros[nombre][fecha]['salida'] = fecha_hora
+            registros[nombre][fecha].append(fecha_hora)
+
+        # Ordenar registros y determinar entrada y salida
+        for nombre, dias in registros.items():
+            for fecha, tiempos in dias.items():
+                tiempos.sort()  # Ordena cronológicamente
+                entrada = tiempos[0] if tiempos else None
+                salida = tiempos[-1] if len(tiempos) > 1 else entrada
+
+                if entrada and salida and salida < entrada:
+                    raise UserError(_(
+                        "La hora de salida no puede ser anterior a la hora de entrada para el empleado: %s en la fecha: %s. salida: %s - entrada: %s" % (nombre, fecha, salida, entrada)))
+
+                registros[nombre][fecha] = {'entrada': entrada, 'salida': salida}
 
         # Crear registros de asistencia
         modelo_asistencias = self.env['hr.attendance']
