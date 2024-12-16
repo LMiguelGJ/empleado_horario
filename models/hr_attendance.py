@@ -1,5 +1,6 @@
 from odoo import models, fields, api
-from datetime import timedelta
+from datetime import datetime
+
 
 class HrAttendance(models.Model):
     _inherit = 'hr.attendance'
@@ -19,6 +20,34 @@ class HrAttendance(models.Model):
         related='employee_id.department_id', 
         store=True
     )
+
+    check_in_12h = fields.Char(
+        string="Entrada", 
+        compute="_compute_12h_format", 
+        store=True
+    )
+    check_out_12h = fields.Char(
+        string="Salida", 
+        compute="_compute_12h_format", 
+        store=True
+    )
+
+    @api.depends('check_in', 'check_out')
+    def _compute_12h_format(self):
+        for record in self:
+            if record.check_in:
+                record.check_in_12h = datetime.strftime(
+                    fields.Datetime.to_datetime(record.check_in), "%I:%M %p"
+                )
+            else:
+                record.check_in_12h = ''
+            if record.check_out:
+                record.check_out_12h = datetime.strftime(
+                    fields.Datetime.to_datetime(record.check_out), "%I:%M %p"
+                )
+            else:
+                record.check_out_12h = ''
+
 
     @api.depends('worked_hours', 'employee_id')
     def _compute_extra_hours(self):

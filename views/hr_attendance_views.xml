@@ -6,6 +6,12 @@
             <field name="model">hr.attendance</field>
             <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='check_in']" position="replace">
+                    <field name="check_in_12h" />
+                </xpath>
+                <xpath expr="//field[@name='check_out']" position="replace">
+                    <field name="check_out_12h" />
+                </xpath>
                 <xpath expr="//field[@name='employee_id']" position="before">
                     <field name="branch_id" options="{'no_create': False}" />
                 </xpath>
@@ -51,8 +57,8 @@
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
-        
+
         <menuitem id="menu_hr_attendance_import" name="Importar Asistencias" parent="menu_empleado_horario_root" action="action_import_attendance_wizard" sequence="30"/>
-    
+
     </data>
 </odoo>
